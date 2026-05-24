@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Imran Ansari — Flying Portfolio</title>
+    <meta name="description" content="Fly a paper plane over Paris and collect projects from Imran Ansari's portfolio. Full case studies at portfolio-imran-ansari.vercel.app." />
+    <link rel="canonical" href="https://portfolio-imran-ansari.vercel.app" />
+    <meta name="theme-color" content="#0a0f1a" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Imran Ansari — Flying Portfolio" />
+    <meta property="og:description" content="Fly over Paris and collect projects from my portfolio. Agentic AI · Geospatial · Frontend." />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="A paper plane flies over a 3D-rendered Paris with portfolio billboards floating in the sky." />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Imran Ansari — Flying Portfolio" />
+    <meta name="twitter:description" content="Fly over Paris and collect projects from my portfolio. Agentic AI · Geospatial · Frontend." />
+    <meta name="twitter:image" content="/og-image.png" />
+
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div id="cesium"></div>
+
+    <!-- Boost FX overlay: vignette + radial speed lines, fades in when boosting -->
+    <div id="boost-fx" class="boost-fx">
+      <div class="bfx-vignette"></div>
+      <div class="bfx-lines"></div>
+    </div>
+
+    <div id="loader">
+      <div class="intro">
+        <div class="intro-eyebrow">Welcome</div>
+        <h1 class="intro-name">Imran Ansari</h1>
+        <p class="intro-role">Senior Full-Stack Engineer</p>
+        <p class="intro-tagline">
+          Building <span class="intro-accent">agentic AI</span> and
+          <span class="intro-accent">geospatial</span> platforms.
+        </p>
+        <p class="intro-bio">
+          4+ years shipping production platforms. Currently leading the
+          frontend rewrite of SmartMarket.ai — React 19, in-browser Pyodide,
+          LLM tool-calling, schema-grounded SQL on the client.
+        </p>
+
+        <div class="intro-pills">
+          <span class="intro-pill intro-pill-accent">Agentic AI</span>
+          <span class="intro-pill intro-pill-accent">Geospatial</span>
+          <span class="intro-pill">React 19</span>
+          <span class="intro-pill">FastAPI</span>
+          <span class="intro-pill">PostGIS</span>
+          <span class="intro-pill">Deck.gl</span>
+          <span class="intro-pill">GCP</span>
+        </div>
+
+        <p class="intro-hint">
+          Take off and fly through Paris — billboards along the way show
+          what I've shipped.
+        </p>
+
+        <div class="intro-cta-row">
+          <button id="intro-start" class="intro-start" disabled>
+            <span class="intro-start-spinner"></span>
+            <span class="intro-start-text">Preparing tour…</span>
+          </button>
+          <a
+            id="intro-resume"
+            class="intro-resume"
+            href="https://portfolio-imran-ansari.vercel.app/resume"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View as resume →
+          </a>
+        </div>
+
+        <label class="intro-endless">
+          <input type="checkbox" id="intro-endless" />
+          <span>Endless mode — no timer, just fly</span>
+        </label>
+
+        <p class="intro-controls">
+          ↑↓ pitch · ←→ turn · W/S throttle · Space level<br />
+          R barrel roll · Z dribble · C brake spin<br />
+          B engage boost (5s · spends 1 charge) · charges from cards<br />
+          Hold ⇧ Shift to pause &amp; read the nearest card
+        </p>
+      </div>
+    </div>
+
+    <!-- Mode switcher visible during play -->
+    <button id="mode-toggle" class="mode-toggle hidden" type="button" aria-label="Toggle resume view">
+      <span id="mode-toggle-label">📋 Resume</span>
+    </button>
+
+    <!-- Resume / classic view — scrollable, scannable, link out to projects -->
+    <main id="resume-view" class="resume-view hidden">
+      <div class="resume-inner">
+        <header class="resume-hero">
+          <p class="resume-eyebrow">Senior Full-Stack Engineer</p>
+          <h1 class="resume-name">Imran Ansari</h1>
+          <p class="resume-tagline">
+            Building <span class="resume-accent">agentic AI</span> and
+            <span class="resume-accent">geospatial</span> platforms.
+          </p>
+          <p class="resume-bio">
+            4+ years shipping production platforms. Currently leading the
+            frontend rewrite of SmartMarket.ai into an agentic, dataset-aware
+            geospatial intelligence platform — React 19, in-browser Pyodide,
+            LLM tool-calling, and schema-grounded SQL on the client.
+          </p>
+          <div class="resume-pills">
+            <span class="intro-pill intro-pill-accent">Agentic AI</span>
+            <span class="intro-pill intro-pill-accent">Geospatial</span>
+            <span class="intro-pill">React 19</span>
+            <span class="intro-pill">FastAPI</span>
+            <span class="intro-pill">PostGIS</span>
+            <span class="intro-pill">GCP</span>
+          </div>
+          <div class="resume-hero-actions">
+            <a class="resume-cta resume-cta-primary" href="https://portfolio-imran-ansari.vercel.app" target="_blank" rel="noopener noreferrer">Full portfolio ↗</a>
+            <a class="resume-cta" href="mailto:m.imran.ansari.2020@gmail.com">Email me</a>
+            <a class="resume-cta" href="/resume.pdf" download>Download resume</a>
+            <a class="resume-cta" href="https://github.com/imran1721" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </div>
+        </header>
+
+        <section class="resume-section">
+          <p class="resume-section-eyebrow">Selected work</p>
+          <div id="resume-projects" class="resume-projects"></div>
+        </section>
+
+        <footer class="resume-footer">
+          <p>
+            Like what you saw? Get in touch:
+            <a href="mailto:m.imran.ansari.2020@gmail.com">m.imran.ansari.2020@gmail.com</a>
+          </p>
+        </footer>
+      </div>
+    </main>
+
+    <div id="plane-layer">
+      <svg id="plane" viewBox="0 0 100 100">
+        <!-- Top-down jet silhouette: nose up, swept wings, swept tail -->
+        <path
+          d="M50 6
+             L54 38 L96 60 L96 65 L54 50
+             L54 78 L72 90 L72 92 L54 84
+             L53 96
+             L47 96
+             L46 84 L28 92 L28 90 L46 78
+             L46 50 L4 65 L4 60 L46 38
+             Z"
+          fill="white"
+          stroke="#0f172a"
+          stroke-width="1.5"
+          stroke-linejoin="round"
+        />
+        <!-- Subtle fuselage centerline so the body reads as 3D -->
+        <line
+          x1="50" y1="14" x2="50" y2="92"
+          stroke="rgba(15, 23, 42, 0.25)"
+          stroke-width="0.8"
+          stroke-linecap="round"
+        />
+        <!-- Teal cockpit canopy — accent matching the billboards -->
+        <ellipse
+          cx="50" cy="24" rx="2.6" ry="5.5"
+          fill="#0d9488"
+          stroke="#0f172a"
+          stroke-width="0.6"
+        />
+      </svg>
+    </div>
+
+    <div id="poi-layer"></div>
+
+    <div id="hud">
+      <div>↑↓ pitch &middot; ←→ turn &middot; W/S throttle &middot; Space level</div>
+      <div class="hud-tricks">R barrel roll &middot; Z dribble &middot; C brake spin &middot; B engage boost</div>
+      <div id="hud-stats"></div>
+    </div>
+
+    <div id="score-hud">
+      <div class="score-label">SCORE</div>
+      <div class="score-value" id="score-value">0</div>
+      <div class="timer-label">TIME</div>
+      <div class="timer-value" id="timer-value">0:30</div>
+      <div class="boost-row">
+        <div class="boost-label">BOOST</div>
+        <div class="boost-level" id="boost-level">×1</div>
+      </div>
+      <div class="boost-bar">
+        <div class="boost-fill" id="boost-fill"></div>
+      </div>
+    </div>
+
+    <aside id="collection-panel" class="collection-panel">
+      <div class="collection-label">COLLECTED</div>
+      <div class="collection-chips" id="collection-chips"></div>
+    </aside>
+
+    <nav id="contact-bar" class="contact-bar">
+      <a href="https://portfolio-imran-ansari.vercel.app" target="_blank" rel="noopener noreferrer" title="Full portfolio with case studies" aria-label="Open full portfolio">
+        <span class="cb-icon">↗</span><span class="cb-label">Portfolio</span>
+      </a>
+      <a href="mailto:m.imran.ansari.2020@gmail.com" title="Email" aria-label="Email Imran">
+        <span class="cb-icon">✉</span><span class="cb-label">Email</span>
+      </a>
+      <a href="https://github.com/imran1721" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub profile">
+        <span class="cb-icon">⌥</span><span class="cb-label">GitHub</span>
+      </a>
+      <a href="/resume.pdf" download title="Resume" aria-label="Download resume">
+        <span class="cb-icon">⤓</span><span class="cb-label">Resume</span>
+      </a>
+    </nav>
+
+    <!-- Hold-Shift "read mode": pauses the game and zooms the nearest visible card -->
+    <div id="zoom-card" class="zoom-card hidden">
+      <div class="zoom-card-body">
+        <div class="zoom-kicker" id="zoom-kicker"></div>
+        <h2 class="zoom-title" id="zoom-title"></h2>
+        <p class="zoom-body" id="zoom-body"></p>
+        <div class="zoom-stack" id="zoom-stack"></div>
+        <a id="zoom-link" class="zoom-link" target="_blank" rel="noopener noreferrer">Open ↗</a>
+      </div>
+      <div class="zoom-hint">Release <kbd>⇧ Shift</kbd> to keep flying</div>
+    </div>
+
+    <div id="game-over" class="game-over hidden">
+      <div class="game-over-card">
+        <div class="game-over-kicker">Time's up</div>
+        <h2 class="game-over-title">Nice flying.</h2>
+        <div class="game-over-score">
+          <span id="final-score">0</span>
+          <span class="game-over-divider">/</span>
+          <span id="final-total">0</span>
+          <span class="game-over-suffix">cards hit</span>
+        </div>
+        <p class="game-over-tagline">
+          Like what you saw? Let's chat.
+        </p>
+
+        <div class="go-collected" id="go-collected"></div>
+
+        <div class="game-over-actions">
+          <a class="go-btn go-btn-primary" href="https://portfolio-imran-ansari.vercel.app" target="_blank" rel="noopener noreferrer">
+            <span class="go-btn-icon">↗</span> Full portfolio &amp; case studies
+          </a>
+          <a class="go-btn" href="mailto:m.imran.ansari.2020@gmail.com">
+            <span class="go-btn-icon">✉</span> Email me
+          </a>
+          <a class="go-btn" href="/resume.pdf" download>
+            <span class="go-btn-icon">⤓</span> Download resume
+          </a>
+        </div>
+        <button class="go-replay" id="go-replay">Play again ↻</button>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
