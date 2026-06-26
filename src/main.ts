@@ -175,10 +175,15 @@ Missing VITE_GOOGLE_MAPS_API_KEY.
   // Wait for tiles, then for the user to click Take off.
   // The "View as resume" link in the intro opens the deployed portfolio in a
   // new tab — it doesn't dismiss the intro, so the user can still take off here.
+  // initialTilesLoaded can hang indefinitely if any tile request stalls, so we
+  // race it against a max wait — tiles keep streaming in once we take off.
+  const MAX_TILE_WAIT_MS = 6000;
   let endlessMode = false;
   await new Promise<void>((resolve) => {
-    const off = tileset.initialTilesLoaded.addEventListener(() => {
-      off();
+    let armed = false;
+    const armTakeoff = () => {
+      if (armed) return;
+      armed = true;
       const btn = document.getElementById("intro-start") as HTMLButtonElement;
       const text = btn.querySelector(".intro-start-text") as HTMLSpanElement;
       btn.disabled = false;
@@ -195,7 +200,17 @@ Missing VITE_GOOGLE_MAPS_API_KEY.
         },
         { once: true }
       );
+    };
+
+    const off = tileset.initialTilesLoaded.addEventListener(() => {
+      off();
+      clearTimeout(timer);
+      armTakeoff();
     });
+    const timer = setTimeout(() => {
+      off();
+      armTakeoff();
+    }, MAX_TILE_WAIT_MS);
   });
 
   state.resetTimer();
